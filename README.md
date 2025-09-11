@@ -4,7 +4,7 @@ A modern, responsive business card component with 3D flip animation and AMOLED d
 
 ## 🚀 Live Demo
 
-**[View Live Card](https://cardlio.netlify.app/)** ✨
+**[View Live Card](https://grvsnh.github.io/SCT_WD_1/)** ✨
 
 ## ✨ Features
 

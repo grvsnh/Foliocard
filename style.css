@@ -1,16 +1,3 @@
-/* =================================================
-   PERFECT MOBILE BUSINESS CARD - FINAL VERSION
-   =================================================
-
-   Features:
-   - Mobile-first responsive design
-   - Touch-optimized interactions
-   - Perfect flip animation on mobile
-   - No layout breaking on mobile browsers
-
-   ================================================= */
-
-/* RESET AND BASE STYLES */
 * {
 	margin: 0;
 	padding: 0;
@@ -23,23 +10,18 @@
 	user-select: none;
 }
 
-/* COLOR VARIABLES */
 :root {
 	--bg-primary: #000000;
 	--bg-card: #000000;
 	--bg-elevated: #0f0f0f;
-
 	--text-primary: #ffffff;
 	--text-secondary: #cccccc;
 	--text-muted: #888888;
-
 	--border-color: rgba(255, 255, 255, 0.2);
 	--glow-soft: rgba(255, 255, 255, 0.15);
-
 	--github: #ffffff;
 	--linkedin: #0077b5;
 	--email: #ea4335;
-
 	--python-color: #3776ab;
 	--js-color: #f7df1e;
 	--react-color: #61dafb;
@@ -54,13 +36,12 @@
 	--vscode-color: #007acc;
 }
 
-/* BODY SETUP - MOBILE OPTIMIZED */
 body {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 		system-ui, sans-serif;
 	background: var(--bg-primary);
 	min-height: 100vh;
-	min-height: -webkit-fill-available; /* iOS Safari fix */
+	min-height: -webkit-fill-available;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -72,9 +53,9 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-/* CONTAINER */
 .container {
 	perspective: 1000px;
+	-webkit-perspective: 1000px;
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -84,23 +65,27 @@ body {
 	max-width: 500px;
 }
 
-/* MAIN BUSINESS CARD - RESPONSIVE SIZING */
 .business-card {
 	width: 100%;
 	max-width: 420px;
 	height: 250px;
 	position: relative;
 	transform-style: preserve-3d;
+	-webkit-transform-style: preserve-3d;
 	transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+	-webkit-transition: -webkit-transform 0.6s
+		cubic-bezier(0.25, 0.46, 0.45, 0.94);
 	cursor: pointer;
 	border-radius: 16px;
 	border: 2px solid var(--border-color);
-	animation: pulseGlow 4s ease-in-out infinite;
+	animation: cardEntrance 0.8s ease-out,
+		pulseGlow 4s ease-in-out infinite 0.8s;
 	touch-action: manipulation;
 	will-change: transform;
+	transform: translate3d(0, 0, 0);
+	-webkit-transform: translate3d(0, 0, 0);
 }
 
-/* PULSE GLOW ANIMATION */
 @keyframes pulseGlow {
 	0%,
 	100% {
@@ -112,12 +97,22 @@ body {
 	}
 }
 
-/* FLIP STATE */
-.business-card.flipped {
-	transform: rotateY(180deg);
+@keyframes cardEntrance {
+	from {
+		opacity: 0;
+		transform: translateY(20px) scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
 }
 
-/* CARD FACES */
+.business-card.flipped {
+	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
+}
+
 .card-face {
 	position: absolute;
 	width: 100%;
@@ -128,13 +123,15 @@ body {
 	background: var(--bg-card);
 	display: flex;
 	overflow: hidden;
+	transform: translate3d(0, 0, 0);
+	-webkit-transform: translate3d(0, 0, 0);
 }
 
 .card-back {
 	transform: rotateY(180deg);
+	-webkit-transform: rotateY(180deg);
 }
 
-/* ===== FRONT SIDE LAYOUT ===== */
 .card-left {
 	flex: 0 0 35%;
 	display: flex;
@@ -149,7 +146,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	min-width: 0; /* Prevent flex overflow */
+	min-width: 0;
 }
 
 .profile-section {
@@ -168,7 +165,6 @@ body {
 	justify-content: center;
 }
 
-/* PROFILE AVATAR - MOBILE OPTIMIZED */
 .avatar {
 	width: 90px;
 	height: 90px;
@@ -181,7 +177,6 @@ body {
 	display: block;
 }
 
-/* STATUS INDICATOR */
 .status-indicator {
 	position: absolute;
 	bottom: 8px;
@@ -206,7 +201,6 @@ body {
 	}
 }
 
-/* INFO SECTION */
 .info-section {
 	height: 100%;
 	display: flex;
@@ -215,7 +209,6 @@ body {
 	gap: 10px;
 }
 
-/* TEXT SIZING - MOBILE OPTIMIZED */
 .name {
 	font-size: 20px;
 	font-weight: 700;
@@ -241,7 +234,6 @@ body {
 	margin: 0;
 }
 
-/* SOCIAL LINKS - MOBILE TOUCH OPTIMIZED */
 .social-links {
 	display: flex;
 	gap: 10px;
@@ -264,33 +256,43 @@ body {
 	font-size: 16px;
 	position: relative;
 	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.social-link:hover {
+	transform: translateY(-2px) scale(1.05);
+	-webkit-transform: translateY(-2px) scale(1.05);
 }
 
 .social-link:active {
 	transform: scale(0.95);
+	-webkit-transform: scale(0.95);
 }
 
+.social-link.github:hover,
 .social-link.github:active {
 	background: var(--github);
 	color: var(--bg-primary);
 }
 
+.social-link.linkedin:hover,
 .social-link.linkedin:active {
 	background: var(--linkedin);
 	color: white;
 }
 
+.social-link.email:hover,
 .social-link.email:active {
 	background: var(--email);
 	color: white;
 }
 
-/* MOBILE SOCIAL TOOLTIPS */
 .social-tooltip {
 	position: absolute;
 	bottom: -25px;
 	left: 50%;
 	transform: translateX(-50%);
+	-webkit-transform: translateX(-50%);
 	background: rgba(0, 0, 0, 0.9);
 	color: white;
 	padding: 4px 8px;
@@ -305,11 +307,14 @@ body {
 	z-index: 100;
 }
 
+.social-link:hover .social-tooltip {
+	opacity: 1;
+}
+
 .social-link:active .social-tooltip {
 	opacity: 1;
 }
 
-/* TAGLINE */
 .tagline {
 	margin-top: 5px;
 }
@@ -323,7 +328,6 @@ body {
 	font-weight: 500;
 }
 
-/* FLIP HINT */
 .flip-hint {
 	position: absolute;
 	top: 12px;
@@ -337,9 +341,9 @@ body {
 
 .flip-hint i {
 	transition: transform 0.3s ease;
+	-webkit-transition: -webkit-transform 0.3s ease;
 }
 
-/* ===== BACK SIDE LAYOUT ===== */
 .back-content {
 	width: 100%;
 	padding: 20px 25px;
@@ -393,7 +397,6 @@ body {
 	margin: 0 0 12px 0;
 }
 
-/* TECH GRID - MOBILE OPTIMIZED */
 .tech-grid {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
@@ -418,13 +421,14 @@ body {
 	color: var(--text-secondary);
 	transition: all 0.2s ease;
 	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
 }
 
 .tech-item:active {
 	transform: scale(0.9);
+	-webkit-transform: scale(0.9);
 }
 
-/* TECH ITEM ACTIVE COLORS */
 .tech-item.python:active {
 	color: var(--python-color);
 }
@@ -466,7 +470,6 @@ body {
 	opacity: 0.4;
 }
 
-/* MOBILE TAP HINT */
 .mobile-hint {
 	text-align: center;
 	opacity: 0.6;
@@ -479,39 +482,30 @@ body {
 	font-style: italic;
 }
 
-/* ===== RESPONSIVE BREAKPOINTS ===== */
-
-/* LARGE MOBILE */
 @media (min-width: 400px) {
 	.business-card {
 		max-width: 450px;
 		height: 270px;
 	}
-
 	.card-right,
 	.back-content {
 		padding: 25px 30px;
 	}
-
 	.avatar {
 		width: 100px;
 		height: 100px;
 	}
-
 	.name {
 		font-size: 22px;
 	}
-
 	.title {
 		font-size: 13px;
 	}
-
 	.social-link {
 		width: 38px;
 		height: 38px;
 		font-size: 18px;
 	}
-
 	.tech-item {
 		width: 34px;
 		height: 34px;
@@ -519,110 +513,77 @@ body {
 	}
 }
 
-/* TABLET AND DESKTOP */
 @media (min-width: 768px) {
 	body {
 		padding: 40px 20px;
 	}
-
 	.business-card {
 		max-width: 500px;
 		height: 300px;
 	}
-
 	.card-left {
 		padding: 25px;
 	}
-
 	.card-right,
 	.back-content {
 		padding: 35px 40px;
 		gap: 16px;
 	}
-
 	.avatar {
 		width: 130px;
 		height: 130px;
 	}
-
 	.name {
 		font-size: 28px;
 		letter-spacing: -0.8px;
 	}
-
 	.title {
 		font-size: 15px;
 	}
-
 	.location {
 		font-size: 13px;
 	}
-
 	.social-links {
 		gap: 14px;
 	}
-
 	.social-link {
 		width: 44px;
 		height: 44px;
 		font-size: 20px;
 	}
-
 	.tagline p {
 		font-size: 12px;
 	}
-
 	.about-text p {
 		font-size: 13px;
 	}
-
 	.tech-grid {
 		grid-template-columns: repeat(6, 1fr);
 		grid-template-rows: repeat(2, 1fr);
 		gap: 12px;
 		max-width: 420px;
 	}
-
 	.tech-item {
 		width: 38px;
 		height: 38px;
 		font-size: 20px;
 	}
-
 	.flip-hint {
 		font-size: 16px;
 	}
-
-	/* DESKTOP HOVER EFFECTS */
 	.avatar:hover {
 		transform: scale(1.08);
 		box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
 		filter: brightness(1.1);
 	}
-
 	.social-link:hover {
 		transform: translateY(-2px) scale(1.1);
+		-webkit-transform: translateY(-2px) scale(1.1);
 	}
-
-	.social-link.github:hover {
-		background: var(--github);
-		color: var(--bg-primary);
-	}
-
-	.social-link.linkedin:hover {
-		background: var(--linkedin);
-		color: white;
-	}
-
-	.social-link.email:hover {
-		background: var(--email);
-		color: white;
-	}
-
 	.tech-item:hover {
 		transform: translateY(-2px) scale(1.1);
+		-webkit-transform: translateY(-2px) scale(1.1);
 	}
-
 	.tech-item.python:hover {
 		color: var(--python-color);
 	}
@@ -659,42 +620,15 @@ body {
 	.tech-item.vscode:hover {
 		color: var(--vscode-color);
 	}
-
 	.business-card:hover .flip-hint i {
 		transform: rotate(180deg);
+		-webkit-transform: rotate(180deg);
 	}
-
-	/* DESKTOP TOOLTIPS */
-	.social-link::after {
-		content: attr(data-tooltip);
-		position: absolute;
-		bottom: -30px;
-		left: 50%;
-		transform: translateX(-50%);
-		background: rgba(0, 0, 0, 0.9);
-		color: white;
-		padding: 6px 10px;
-		border-radius: 8px;
-		font-size: 11px;
-		white-space: nowrap;
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.3s ease;
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		font-family: "Courier New", monospace;
-		z-index: 100;
-	}
-
-	.social-link:hover::after {
-		opacity: 1;
-	}
-
 	.mobile-hint {
 		display: none;
 	}
 }
 
-/* HIGH DPI DISPLAYS */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
 	.business-card {
 		-webkit-font-smoothing: antialiased;
@@ -702,44 +636,23 @@ body {
 	}
 }
 
-/* ACCESSIBILITY */
 @media (prefers-reduced-motion: reduce) {
 	.business-card {
 		animation: none;
 		transition: transform 0.3s ease;
 	}
-
 	.avatar,
 	.social-link,
 	.tech-item {
 		transition: none;
 	}
-
 	.status-indicator {
 		animation: none;
 	}
 }
 
-/* iOS SPECIFIC FIXES */
 @supports (-webkit-appearance: none) {
 	body {
 		min-height: -webkit-fill-available;
-	}
-}
-
-/* ENTRANCE ANIMATION */
-.business-card {
-	animation: cardEntrance 0.8s ease-out,
-		pulseGlow 4s ease-in-out infinite 0.8s;
-}
-
-@keyframes cardEntrance {
-	from {
-		opacity: 0;
-		transform: translateY(20px) scale(0.95);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0) scale(1);
 	}
 }
