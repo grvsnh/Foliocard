@@ -1,0 +1,802 @@
+/* =================================================
+   PERFECT AMOLED BUSINESS CARD - FINAL VERSION
+   =================================================
+
+   Features:
+   - Single border with pulse glow
+   - Perfect mobile responsiveness 
+   - Social link tooltips
+   - No double borders on click
+   - Fixed name cutting on mobile
+
+   Edit sections:
+   - Colors: :root variables
+   - Card size: .business-card width/height
+   - Mobile breakpoints: @media queries
+   - Animations: @keyframes sections
+
+   ================================================= */
+
+/* RESET AND BASE STYLES */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+/* COLOR VARIABLES - EDIT COLORS HERE */
+:root {
+	/* AMOLED Theme Colors */
+	--bg-primary: #000000; /* Main background */
+	--bg-card: #000000; /* Card background */
+	--bg-elevated: #0f0f0f; /* Buttons background */
+
+	/* Text Colors */
+	--text-primary: #ffffff; /* Main text */
+	--text-secondary: #cccccc; /* Secondary text */
+	--text-muted: #888888; /* Muted text */
+
+	/* Border and Glow */
+	--border-color: rgba(255, 255, 255, 0.2); /* Single border color */
+	--glow-soft: rgba(255, 255, 255, 0.15); /* Pulse glow */
+
+	/* Social Media Colors */
+	--github: #ffffff;
+	--linkedin: #0077b5;
+	--email: #ea4335;
+
+	/* Tech Stack Colors */
+	--python-color: #3776ab;
+	--js-color: #f7df1e;
+	--react-color: #61dafb;
+	--node-color: #339933;
+	--linux-color: #fcc624;
+	--git-color: #f05032;
+	--html-color: #e34f26;
+	--css-color: #1572b6;
+	--docker-color: #2496ed;
+	--mongo-color: #47a248;
+	--aws-color: #ff9900;
+	--vscode-color: #007acc;
+}
+
+/* BODY AND CONTAINER SETUP */
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter",
+		sans-serif;
+	background: var(--bg-primary);
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 30px 20px 40px 20px; /* Extra bottom padding for mobile */
+	color: var(--text-primary);
+	overflow-x: hidden;
+}
+
+.container {
+	perspective: 1200px;
+	position: relative;
+}
+
+/* MAIN BUSINESS CARD - EDIT SIZE HERE */
+.business-card {
+	width: 500px; /* Card width - edit here */
+	height: 300px; /* Card height - edit here */
+	position: relative;
+	transform-style: preserve-3d;
+	transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+	border-radius: 20px;
+	user-select: none;
+
+	/* SINGLE BORDER - EDIT BORDER HERE */
+	border: 2px solid var(--border-color);
+
+	/* PULSE GLOW ANIMATION */
+	animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* NO DOUBLE BORDER ON FOCUS/CLICK */
+.business-card:focus,
+.business-card:active {
+	outline: none !important;
+}
+
+/* FLIP ANIMATION */
+.business-card.flipped {
+	transform: rotateY(180deg);
+}
+
+/* PULSE GLOW ANIMATION - EDIT GLOW INTENSITY HERE */
+@keyframes pulseGlow {
+	0%,
+	100% {
+		box-shadow: 0 0 30px var(--glow-soft), 0 8px 32px rgba(0, 0, 0, 0.8);
+	}
+	33% {
+		box-shadow: 0 0 50px rgba(255, 255, 255, 0.25),
+			0 12px 40px rgba(0, 0, 0, 0.9);
+	}
+	66% {
+		box-shadow: 0 0 40px rgba(255, 255, 255, 0.2),
+			0 10px 36px rgba(0, 0, 0, 0.85);
+	}
+}
+
+.business-card:hover {
+	animation-duration: 2s; /* Faster pulse on hover */
+}
+
+/* CARD FACE SETUP */
+.card-face {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	backface-visibility: hidden;
+	border-radius: 20px;
+	background: var(--bg-card);
+	display: flex;
+	overflow: hidden;
+}
+
+.card-back {
+	transform: rotateY(180deg);
+}
+
+/* ===== FRONT SIDE LAYOUT ===== */
+
+/* LEFT SECTION - PROFILE IMAGE */
+.card-left {
+	flex: 0 0 35%; /* 35% width for image section */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 25px;
+}
+
+/* RIGHT SECTION - INFO */
+.card-right {
+	flex: 1; /* Take remaining space */
+	padding: 35px 40px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.profile-section {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+
+.profile-image {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* PROFILE AVATAR - EDIT IMAGE SIZE HERE */
+.avatar {
+	width: 130px; /* Avatar size */
+	height: 130px;
+	border-radius: 50%;
+	object-fit: cover;
+	object-position: center 15%; /* Better positioning for hair visibility */
+	border: 3px solid rgba(255, 255, 255, 0.3);
+	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	box-shadow: 0 0 25px var(--glow-soft);
+	display: block;
+}
+
+.avatar:hover {
+	transform: scale(1.08);
+	box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+	filter: brightness(1.1) saturate(1.05);
+	border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* STATUS INDICATOR */
+.status-indicator {
+	position: absolute;
+	bottom: 12px;
+	right: 12px;
+	width: 22px;
+	height: 22px;
+	background: #00ff00;
+	border: 3px solid var(--bg-card);
+	border-radius: 50%;
+	animation: statusPulse 2.5s infinite;
+}
+
+@keyframes statusPulse {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7);
+	}
+	50% {
+		opacity: 0.8;
+		transform: scale(1.1);
+		box-shadow: 0 0 0 8px rgba(0, 255, 0, 0);
+	}
+}
+
+/* INFO SECTION LAYOUT */
+.info-section {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 16px;
+}
+
+/* NAME STYLING - EDIT FONT SIZE HERE */
+.name {
+	font-size: 32px; /* Name font size */
+	font-weight: 700;
+	color: var(--text-primary);
+	margin: 0;
+	line-height: 1.1;
+	letter-spacing: -1px;
+	word-wrap: break-word; /* Prevent text overflow */
+}
+
+/* TITLE AND LOCATION */
+.title {
+	font-size: 16px;
+	color: var(--text-secondary);
+	font-weight: 400;
+	margin: 0;
+	letter-spacing: 0.3px;
+}
+
+.location {
+	font-size: 14px;
+	color: var(--text-muted);
+	margin: 0;
+}
+
+/* SOCIAL LINKS CONTAINER */
+.social-links {
+	display: flex;
+	gap: 16px;
+	margin: 12px 0;
+	flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+/* SOCIAL LINK BUTTONS */
+.social-link {
+	width: 46px;
+	height: 46px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--bg-elevated);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: var(--text-secondary);
+	text-decoration: none;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	font-size: 20px;
+	position: relative;
+	outline: none !important;
+}
+
+.social-link:focus {
+	outline: none !important;
+}
+
+.social-link:hover {
+	transform: translateY(-3px) scale(1.1);
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* SOCIAL LINK HOVER COLORS */
+.social-link.github:hover {
+	background: var(--github);
+	color: var(--bg-primary);
+	box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+.social-link.linkedin:hover {
+	background: var(--linkedin);
+	color: white;
+	box-shadow: 0 8px 25px rgba(0, 119, 181, 0.4);
+}
+
+.social-link.email:hover {
+	background: var(--email);
+	color: white;
+	box-shadow: 0 8px 25px rgba(234, 67, 53, 0.4);
+}
+
+/* SOCIAL LINK TOOLTIPS - EDIT TOOLTIP STYLE HERE */
+.social-link::after {
+	content: attr(data-tooltip);
+	position: absolute;
+	bottom: -35px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(0, 0, 0, 0.9);
+	color: var(--text-primary);
+	padding: 6px 10px;
+	border-radius: 8px;
+	font-size: 11px;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.3s ease, transform 0.3s ease;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	z-index: 100;
+	font-family: "Courier New", monospace;
+	letter-spacing: 0.5px;
+}
+
+.social-link:hover::after {
+	opacity: 1;
+	transform: translateX(-50%) translateY(-2px);
+}
+
+/* TAGLINE */
+.tagline {
+	margin-top: 8px;
+}
+
+.tagline p {
+	font-style: italic;
+	color: var(--text-muted);
+	font-size: 13px;
+	line-height: 1.3;
+	margin: 0;
+	font-weight: 500;
+}
+
+/* FLIP HINT ICON */
+.flip-hint {
+	position: absolute;
+	top: 18px;
+	right: 18px;
+	color: var(--text-muted);
+	font-size: 16px;
+	opacity: 0.4;
+	transition: all 0.3s ease;
+}
+
+.flip-hint i {
+	transition: transform 0.3s ease;
+}
+
+.business-card:hover .flip-hint {
+	opacity: 0.8;
+}
+
+.business-card:hover .flip-hint i {
+	transform: rotate(180deg);
+}
+
+/* ===== BACK SIDE LAYOUT ===== */
+
+.back-content {
+	width: 100%;
+	padding: 35px 40px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 20px;
+}
+
+/* ABOUT HEADER */
+.about-header {
+	text-align: center;
+}
+
+.about-header h2 {
+	font-size: 26px;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin: 0 0 12px 0;
+}
+
+.divider {
+	width: 60px;
+	height: 3px;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 255, 255, 0.6),
+		rgba(255, 255, 255, 0.2)
+	);
+	margin: 0 auto;
+	border-radius: 2px;
+}
+
+/* ABOUT TEXT */
+.about-text {
+	text-align: center;
+}
+
+.about-text p {
+	color: var(--text-secondary);
+	line-height: 1.5;
+	font-size: 14px;
+	margin: 0;
+	max-width: 90%;
+	margin: 0 auto;
+}
+
+/* TECH SECTION */
+.tech-section h3 {
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--text-primary);
+	text-align: center;
+	margin: 0 0 18px 0;
+}
+
+/* TECH GRID - EDIT GRID LAYOUT HERE */
+.tech-grid {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr); /* 6 columns */
+	grid-template-rows: repeat(2, 1fr); /* 2 rows */
+	gap: 12px;
+	justify-items: center;
+	max-width: 450px;
+	margin: 0 auto;
+}
+
+/* TECH ITEMS */
+.tech-item {
+	position: relative;
+	width: 40px;
+	height: 40px;
+	background: var(--bg-elevated);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	color: var(--text-secondary);
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+	outline: none !important;
+}
+
+.tech-item:focus {
+	outline: none !important;
+}
+
+.tech-item:hover {
+	transform: translateY(-3px) scale(1.1);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* TECH ITEM HOVER COLORS - EDIT TECH COLORS HERE */
+.tech-item.python:hover {
+	color: var(--python-color);
+	box-shadow: 0 8px 20px rgba(55, 118, 171, 0.3);
+}
+.tech-item.javascript:hover {
+	color: var(--js-color);
+	box-shadow: 0 8px 20px rgba(247, 223, 30, 0.3);
+}
+.tech-item.react:hover {
+	color: var(--react-color);
+	box-shadow: 0 8px 20px rgba(97, 218, 251, 0.3);
+}
+.tech-item.node:hover {
+	color: var(--node-color);
+	box-shadow: 0 8px 20px rgba(51, 153, 51, 0.3);
+}
+.tech-item.linux:hover {
+	color: var(--linux-color);
+	box-shadow: 0 8px 20px rgba(252, 198, 36, 0.3);
+}
+.tech-item.git:hover {
+	color: var(--git-color);
+	box-shadow: 0 8px 20px rgba(240, 80, 50, 0.3);
+}
+.tech-item.html:hover {
+	color: var(--html-color);
+	box-shadow: 0 8px 20px rgba(227, 79, 38, 0.3);
+}
+.tech-item.css:hover {
+	color: var(--css-color);
+	box-shadow: 0 8px 20px rgba(21, 114, 182, 0.3);
+}
+.tech-item.docker:hover {
+	color: var(--docker-color);
+	box-shadow: 0 8px 20px rgba(36, 150, 237, 0.3);
+}
+.tech-item.mongodb:hover {
+	color: var(--mongo-color);
+	box-shadow: 0 8px 20px rgba(71, 162, 72, 0.3);
+}
+.tech-item.aws:hover {
+	color: var(--aws-color);
+	box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
+}
+.tech-item.vscode:hover {
+	color: var(--vscode-color);
+	box-shadow: 0 8px 20px rgba(0, 122, 204, 0.3);
+}
+
+.flip-hint.back {
+	opacity: 0.4;
+}
+
+/* ===== MOBILE RESPONSIVE DESIGN ===== */
+/* EDIT MOBILE BREAKPOINTS HERE */
+
+/* TABLET SIZE */
+@media (max-width: 768px) {
+	body {
+		padding: 25px 15px 35px 15px;
+	}
+
+	.business-card {
+		width: 450px;
+		height: 270px;
+	}
+
+	.card-left {
+		padding: 20px;
+	}
+
+	.card-right,
+	.back-content {
+		padding: 25px 30px 30px 30px;
+		gap: 12px;
+	}
+
+	.avatar {
+		width: 110px;
+		height: 110px;
+	}
+
+	.name {
+		font-size: 26px; /* Smaller name on tablet */
+	}
+
+	.social-link {
+		width: 42px;
+		height: 42px;
+		font-size: 18px;
+	}
+
+	.tech-item {
+		width: 36px;
+		height: 36px;
+		font-size: 18px;
+	}
+}
+
+/* LARGE MOBILE */
+@media (max-width: 500px) {
+	body {
+		padding: 20px 10px 45px 10px; /* Extra bottom padding */
+	}
+
+	.business-card {
+		width: 380px;
+		height: 240px; /* Slightly taller for content */
+	}
+
+	.card-left {
+		flex: 0 0 38%;
+		padding: 15px;
+	}
+
+	.card-right,
+	.back-content {
+		padding: 20px 25px 25px 25px;
+		gap: 10px;
+	}
+
+	.avatar {
+		width: 85px;
+		height: 85px;
+	}
+
+	/* FIXED NAME SIZE FOR MOBILE */
+	.name {
+		font-size: 22px; /* Fixed size to prevent cutting */
+		letter-spacing: -0.3px;
+		line-height: 1.2;
+		word-break: keep-all; /* Keep name together */
+	}
+
+	.title {
+		font-size: 13px;
+		line-height: 1.3;
+	}
+
+	.location {
+		font-size: 11px;
+	}
+
+	.social-links {
+		gap: 10px;
+		justify-content: flex-start; /* Align left to save space */
+	}
+
+	.social-link {
+		width: 36px;
+		height: 36px;
+		font-size: 16px;
+	}
+
+	.tagline p {
+		font-size: 10px;
+	}
+
+	.about-text p {
+		font-size: 11px;
+		line-height: 1.4;
+	}
+
+	/* MOBILE TECH GRID */
+	.tech-grid {
+		grid-template-columns: repeat(4, 1fr); /* 4 columns on mobile */
+		grid-template-rows: repeat(3, 1fr); /* 3 rows on mobile */
+		gap: 8px;
+		max-width: 280px;
+	}
+
+	.tech-item {
+		width: 30px;
+		height: 30px;
+		font-size: 14px;
+	}
+}
+
+/* SMALL MOBILE */
+@media (max-width: 400px) {
+	body {
+		padding: 15px 8px 50px 8px; /* Maximum bottom padding */
+	}
+
+	.business-card {
+		width: 340px;
+		height: 220px;
+	}
+
+	.card-right,
+	.back-content {
+		padding: 18px 22px 25px 22px;
+		gap: 8px;
+	}
+
+	.avatar {
+		width: 75px;
+		height: 75px;
+	}
+
+	.name {
+		font-size: 20px; /* Even smaller for tiny screens */
+		letter-spacing: -0.2px;
+	}
+
+	.social-link {
+		width: 32px;
+		height: 32px;
+		font-size: 14px;
+	}
+
+	.tech-item {
+		width: 26px;
+		height: 26px;
+		font-size: 12px;
+	}
+
+	.status-indicator {
+		width: 16px;
+		height: 16px;
+		bottom: 6px;
+		right: 6px;
+	}
+}
+
+/* EXTRA SMALL MOBILE */
+@media (max-width: 360px) {
+	body {
+		padding: 12px 6px 55px 6px; /* Maximum padding for smallest screens */
+	}
+
+	.business-card {
+		width: 320px;
+		height: 210px;
+	}
+
+	.card-right,
+	.back-content {
+		padding: 15px 18px 22px 18px;
+		gap: 6px;
+	}
+
+	.avatar {
+		width: 65px;
+		height: 65px;
+	}
+
+	.name {
+		font-size: 18px; /* Smallest name size */
+		letter-spacing: 0;
+	}
+
+	.title {
+		font-size: 11px;
+	}
+
+	.social-link {
+		width: 28px;
+		height: 28px;
+		font-size: 12px;
+	}
+
+	.tech-item {
+		width: 24px;
+		height: 24px;
+		font-size: 11px;
+	}
+
+	.about-header h2 {
+		font-size: 16px;
+	}
+
+	.tech-section h3 {
+		font-size: 14px;
+	}
+
+	.flip-hint {
+		font-size: 12px;
+	}
+
+	.tagline p {
+		font-size: 9px;
+	}
+}
+
+/* ===== ACCESSIBILITY AND ANIMATIONS ===== */
+
+/* REDUCED MOTION SUPPORT */
+@media (prefers-reduced-motion: reduce) {
+	.business-card {
+		animation: none;
+	}
+
+	.avatar:hover {
+		transform: scale(1.02);
+	}
+
+	.social-link:hover,
+	.tech-item:hover {
+		transform: translateY(-1px);
+	}
+
+	.status-indicator {
+		animation: none;
+	}
+}
+
+/* ENTRANCE ANIMATION */
+.business-card {
+	animation: cardEntrance 1.2s ease-out,
+		pulseGlow 4s ease-in-out infinite 1.2s;
+}
+
+@keyframes cardEntrance {
+	from {
+		opacity: 0;
+		transform: translateY(30px) rotateX(-10deg) scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) rotateX(0deg) scale(1);
+	}
+}
