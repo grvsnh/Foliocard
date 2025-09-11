@@ -95,12 +95,6 @@ Adjust card size in `style.css`:
 -   ✅ Edge 80+
 -   ✅ Mobile browsers (iOS Safari, Chrome Mobile)
 
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
 **Made by [Gaurav Singh](https://github.com/grvsnh)**
 
 _Feel free to fork, customize, and use for your own Portfolio card!_
