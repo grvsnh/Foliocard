@@ -1,28 +1,37 @@
 /* =================================================
-   PERFECT BUSINESS CARD - FINAL JAVASCRIPT
+   PERFECT MOBILE BUSINESS CARD JAVASCRIPT
    =================================================
 
    Features:
-   - Click-only flip animation
-   - Social media tooltips
-   - No double borders
-   - Mobile touch support
-   - Debug functions
-
-   Edit sections:
-   - Sound settings: playFlipSound function
-   - Animation timing: setTimeout values
-   - Debug output: console.log statements
+   - Perfect mobile touch handling
+   - Reliable flip animation on mobile
+   - Optimized for all mobile browsers
+   - No hover conflicts on mobile
 
    ================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-	console.log("🎴 Initializing Perfect Business Card...");
+	console.log("🎴 Initializing Mobile-Perfect Business Card...");
 
 	// MAIN VARIABLES
 	const businessCard = document.getElementById("businessCard");
 	let isFlipping = false;
 	let isFlipped = false;
+	let touchStartTime = 0;
+	let touchStartY = 0;
+	let touchStartX = 0;
+
+	// DEVICE DETECTION
+	const isMobile =
+		/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+			navigator.userAgent
+		) || window.innerWidth <= 768;
+	const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+	const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+	console.log(`📱 Device: ${isMobile ? "Mobile" : "Desktop"}`);
+	console.log(`👆 Touch: ${isTouch ? "Yes" : "No"}`);
+	console.log(`🍎 iOS: ${isIOS ? "Yes" : "No"}`);
 
 	// CHECK IF CARD EXISTS
 	if (!businessCard) {
@@ -30,18 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		return;
 	}
 
-	// REMOVE DEFAULT FOCUS OUTLINE
-	businessCard.style.outline = "none";
-	businessCard.style.border = "none";
-
 	console.log("✅ Business card element found");
 
 	/* ===== FLIP ANIMATION FUNCTIONS ===== */
 
-	// MAIN FLIP FUNCTION
+	// MAIN FLIP FUNCTION - MOBILE OPTIMIZED
 	function flipCard() {
 		if (isFlipping) {
-			console.log("⏸️ Already flipping, ignoring click");
+			console.log("⏸️ Already flipping, ignoring");
 			return;
 		}
 
@@ -50,53 +55,100 @@ document.addEventListener("DOMContentLoaded", () => {
 		isFlipping = true;
 		isFlipped = !isFlipped;
 
-		// ADD/REMOVE FLIP CLASS
-		businessCard.classList.toggle("flipped");
-
-		// HAPTIC FEEDBACK FOR MOBILE
-		if (navigator.vibrate) {
-			navigator.vibrate(40);
+		// MOBILE HAPTIC FEEDBACK
+		if (navigator.vibrate && isMobile) {
+			navigator.vibrate(30);
 		}
 
-		// PLAY FLIP SOUND
-		playFlipSound();
+		// FLIP ANIMATION
+		businessCard.classList.toggle("flipped");
 
-		// RESET FLIPPING STATE AFTER ANIMATION
+		// MOBILE FLIP SOUND
+		if (isMobile) {
+			playMobileFlipSound();
+		} else {
+			playFlipSound();
+		}
+
+		// RESET FLIPPING STATE
+		const duration = isMobile ? 600 : 800;
 		setTimeout(() => {
 			isFlipping = false;
 			console.log("✅ Flip complete");
-		}, 800); // EDIT TIMING HERE (800ms = 0.8s)
+		}, duration);
 
 		updateAccessibility();
 	}
 
-	// CLICK HANDLER - PREVENTS DOUBLE BORDERS
-	function handleCardClick(event) {
-		console.log("👆 Card clicked", event.target.className);
+	/* ===== MOBILE TOUCH HANDLING ===== */
+
+	// TOUCH START HANDLER
+	function handleTouchStart(event) {
+		// DON'T FLIP IF TOUCHING INTERACTIVE ELEMENTS
+		if (
+			event.target.closest(".social-link") ||
+			event.target.closest(".tech-item")
+		) {
+			return;
+		}
+
+		const touch = event.touches[0];
+		touchStartTime = Date.now();
+		touchStartX = touch.clientX;
+		touchStartY = touch.clientY;
+
+		// PREVENT SCROLLING DURING TOUCH
+		event.preventDefault();
+	}
+
+	// TOUCH END HANDLER
+	function handleTouchEnd(event) {
+		// DON'T FLIP IF TOUCHING INTERACTIVE ELEMENTS
+		if (
+			event.target.closest(".social-link") ||
+			event.target.closest(".tech-item")
+		) {
+			return;
+		}
+
+		const touchDuration = Date.now() - touchStartTime;
+		const touch = event.changedTouches[0];
+		const deltaX = Math.abs(touch.clientX - touchStartX);
+		const deltaY = Math.abs(touch.clientY - touchStartY);
+
+		// CHECK FOR VALID TAP (not swipe, not too long)
+		if (touchDuration < 500 && deltaX < 30 && deltaY < 30) {
+			console.log("👆 Valid tap detected");
+			flipCard();
+		}
+
+		event.preventDefault();
+	}
+
+	// MOUSE CLICK HANDLER (DESKTOP)
+	function handleClick(event) {
+		// SKIP ON MOBILE DEVICES
+		if (isMobile || isTouch) {
+			return;
+		}
 
 		// DON'T FLIP IF CLICKING ON INTERACTIVE ELEMENTS
 		if (
 			event.target.closest(".social-link") ||
-			event.target.closest(".tech-item") ||
-			event.target.tagName === "A"
+			event.target.closest(".tech-item")
 		) {
-			console.log("🚫 Interactive element clicked, not flipping");
+			console.log("🚫 Interactive element clicked");
 			return;
 		}
 
-		// REMOVE FOCUS TO PREVENT DOUBLE BORDERS
-		businessCard.blur();
-		event.target.blur();
-
+		console.log("🖱️ Desktop click");
 		flipCard();
 	}
 
-	// KEYBOARD NAVIGATION
+	// KEYBOARD HANDLER
 	function handleKeydown(event) {
 		if (event.key === "Enter" || event.key === " ") {
 			event.preventDefault();
-			// REMOVE FOCUS TO PREVENT DOUBLE BORDERS
-			businessCard.blur();
 			console.log("⌨️ Keyboard flip");
 			flipCard();
 		}
@@ -107,20 +159,46 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
-	/* ===== ACCESSIBILITY FUNCTIONS ===== */
-
-	// UPDATE ACCESSIBILITY LABELS
-	function updateAccessibility() {
-		const label = isFlipped
-			? "Business card back side showing about and tech stack. Press Enter to flip to front."
-			: "Business card front side showing contact info. Press Enter to flip to back.";
-
-		businessCard.setAttribute("aria-label", label);
-	}
-
 	/* ===== SOUND EFFECTS ===== */
 
-	// FLIP SOUND - EDIT SOUND SETTINGS HERE
+	// MOBILE OPTIMIZED FLIP SOUND
+	function playMobileFlipSound() {
+		if (window.AudioContext || window.webkitAudioContext) {
+			try {
+				const audioContext = new (window.AudioContext ||
+					window.webkitAudioContext)();
+				const oscillator = audioContext.createOscillator();
+				const gainNode = audioContext.createGain();
+
+				oscillator.connect(gainNode);
+				gainNode.connect(audioContext.destination);
+
+				// MOBILE-FRIENDLY SOUND SETTINGS
+				oscillator.frequency.setValueAtTime(
+					250,
+					audioContext.currentTime
+				);
+				oscillator.frequency.exponentialRampToValueAtTime(
+					125,
+					audioContext.currentTime + 0.08
+				);
+
+				// QUIETER FOR MOBILE
+				gainNode.gain.setValueAtTime(0.003, audioContext.currentTime);
+				gainNode.gain.exponentialRampToValueAtTime(
+					0.0008,
+					audioContext.currentTime + 0.08
+				);
+
+				oscillator.start(audioContext.currentTime);
+				oscillator.stop(audioContext.currentTime + 0.08);
+			} catch (error) {
+				console.log("🔇 Mobile audio not available");
+			}
+		}
+	}
+
+	// DESKTOP FLIP SOUND
 	function playFlipSound() {
 		if (window.AudioContext || window.webkitAudioContext) {
 			try {
@@ -132,7 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				oscillator.connect(gainNode);
 				gainNode.connect(audioContext.destination);
 
-				// SOUND FREQUENCY SETTINGS
 				oscillator.frequency.setValueAtTime(
 					300,
 					audioContext.currentTime
@@ -142,8 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					audioContext.currentTime + 0.1
 				);
 
-				// SOUND VOLUME SETTINGS (VERY QUIET)
-				gainNode.gain.setValueAtTime(0.005, audioContext.currentTime); // EDIT VOLUME HERE
+				gainNode.gain.setValueAtTime(0.005, audioContext.currentTime);
 				gainNode.gain.exponentialRampToValueAtTime(
 					0.001,
 					audioContext.currentTime + 0.1
@@ -152,219 +228,205 @@ document.addEventListener("DOMContentLoaded", () => {
 				oscillator.start(audioContext.currentTime);
 				oscillator.stop(audioContext.currentTime + 0.1);
 			} catch (error) {
-				console.log("🔇 Audio not available");
+				console.log("🔇 Desktop audio not available");
 			}
 		}
 	}
 
+	/* ===== ACCESSIBILITY ===== */
+
+	function updateAccessibility() {
+		const label = isFlipped
+			? "Business card back side showing about and tech stack. Tap to flip to front."
+			: "Business card front side showing contact info. Tap to flip to back.";
+
+		businessCard.setAttribute("aria-label", label);
+	}
+
 	/* ===== SOCIAL LINKS SETUP ===== */
 
-	// SOCIAL LINKS WITH TOOLTIPS
 	function setupSocialLinks() {
 		const socialLinks = document.querySelectorAll(".social-link");
-		console.log(
-			`🔗 Setting up ${socialLinks.length} social links with tooltips`
-		);
+		console.log(`🔗 Setting up ${socialLinks.length} social links`);
 
 		socialLinks.forEach((link, index) => {
-			// REMOVE FOCUS OUTLINE
-			link.style.outline = "none";
+			// PREVENT CARD FLIP ON SOCIAL LINK INTERACTION
+			link.addEventListener(
+				"touchstart",
+				(event) => {
+					event.stopPropagation();
+				},
+				{ passive: false }
+			);
 
-			// CLICK HANDLER
+			link.addEventListener(
+				"touchend",
+				(event) => {
+					event.stopPropagation();
+				},
+				{ passive: false }
+			);
+
 			link.addEventListener("click", (event) => {
+				event.stopPropagation();
 				const platform = link.classList[1] || `social-${index}`;
 				console.log(`📱 ${platform} clicked`);
+			});
 
-				// REMOVE FOCUS TO PREVENT DOUBLE BORDERS
-				link.blur();
+			// MOBILE TAP FEEDBACK
+			if (isMobile) {
+				link.addEventListener("touchstart", () => {
+					link.style.transform = "scale(0.95)";
+				});
 
-				// CLICK ANIMATION
-				link.style.transition = "transform 0.1s ease";
-				link.style.transform = "scale(0.9)";
-
-				setTimeout(() => {
-					link.style.transform = "";
+				link.addEventListener("touchend", () => {
 					setTimeout(() => {
-						link.style.transition = "";
-					}, 300);
-				}, 100);
-			});
-
-			// HOVER EFFECTS
-			link.addEventListener("mouseenter", () => {
-				link.style.filter = "brightness(1.1)";
-				console.log(
-					`🔗 Showing tooltip: ${link.getAttribute("data-tooltip")}`
-				);
-			});
-
-			link.addEventListener("mouseleave", () => {
-				link.style.filter = "";
-			});
-
-			// PREVENT DOUBLE BORDERS ON FOCUS
-			link.addEventListener("focus", () => {
-				link.blur();
-			});
+						link.style.transform = "";
+					}, 150);
+				});
+			}
 		});
 	}
 
 	/* ===== TECH STACK SETUP ===== */
 
-	// TECH STACK ITEMS (NO TOOLTIPS)
 	function setupTechStack() {
 		const techItems = document.querySelectorAll(".tech-item");
 		console.log(`⚡ Setting up ${techItems.length} tech items`);
 
 		techItems.forEach((item, index) => {
-			// REMOVE FOCUS OUTLINE
-			item.style.outline = "none";
+			// PREVENT CARD FLIP ON TECH ITEM INTERACTION
+			item.addEventListener(
+				"touchstart",
+				(event) => {
+					event.stopPropagation();
+				},
+				{ passive: false }
+			);
 
-			// CLICK HANDLER
+			item.addEventListener(
+				"touchend",
+				(event) => {
+					event.stopPropagation();
+				},
+				{ passive: false }
+			);
+
 			item.addEventListener("click", (event) => {
+				event.stopPropagation();
 				const techClass =
 					Array.from(item.classList).find((c) => c !== "tech-item") ||
 					`tech-${index}`;
-				console.log(`💻 ${techClass} clicked`);
+				console.log(`💻 ${techClass} touched`);
+			});
 
-				// REMOVE FOCUS TO PREVENT DOUBLE BORDERS
-				item.blur();
+			// MOBILE TAP FEEDBACK
+			if (isMobile) {
+				item.addEventListener("touchstart", () => {
+					item.style.transform = "scale(0.9)";
+				});
 
-				// CLICK ANIMATION
-				item.style.transition = "transform 0.15s ease";
-				item.style.transform = "scale(0.85)";
-
-				setTimeout(() => {
-					item.style.transform = "";
+				item.addEventListener("touchend", () => {
 					setTimeout(() => {
-						item.style.transition = "";
-					}, 300);
-				}, 150);
-			});
-
-			// HOVER EFFECTS
-			item.addEventListener("mouseenter", () => {
-				item.style.filter = "brightness(1.2)";
-			});
-
-			item.addEventListener("mouseleave", () => {
-				item.style.filter = "";
-			});
-
-			// PREVENT DOUBLE BORDERS ON FOCUS
-			item.addEventListener("focus", () => {
-				item.blur();
-			});
+						item.style.transform = "";
+					}, 150);
+				});
+			}
 		});
 	}
 
 	/* ===== IMAGE HANDLING ===== */
 
-	// PROFILE IMAGE SETUP WITH FALLBACK
 	function setupImageHandling() {
 		const avatar = document.querySelector(".avatar");
 		if (avatar) {
-			// IMAGE LOAD SUCCESS
 			avatar.addEventListener("load", () => {
-				console.log("✅ Profile image loaded successfully");
-				// BETTER POSITIONING FOR HAIR VISIBILITY
+				console.log("✅ Profile image loaded");
 				avatar.style.objectPosition = "center 15%";
 			});
 
-			// IMAGE LOAD ERROR - USE FALLBACK
 			avatar.addEventListener("error", () => {
 				console.warn("⚠️ pfp.png not found, using fallback");
 				avatar.src =
 					"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face";
 			});
 
-			// CHECK IF IMAGE ALREADY LOADED (CACHED)
+			// CHECK IF ALREADY LOADED
 			if (avatar.complete) {
 				if (avatar.naturalWidth === 0) {
-					console.warn("⚠️ pfp.png failed to load");
+					console.warn("⚠️ Using fallback image");
 					avatar.src =
 						"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face";
 				} else {
-					console.log("✅ Profile image already cached");
-					// BETTER POSITIONING FOR YOUR PHOTO
+					console.log("✅ Profile image cached");
 					avatar.style.objectPosition = "center 15%";
 				}
 			}
-
-			// AVATAR HOVER EFFECTS
-			avatar.addEventListener("mouseenter", () => {
-				avatar.style.filter =
-					"brightness(1.15) saturate(1.1) contrast(1.05)";
-			});
-
-			avatar.addEventListener("mouseleave", () => {
-				avatar.style.filter = "";
-			});
 		}
 	}
 
-	/* ===== PERFORMANCE OPTIMIZATION ===== */
+	/* ===== MOBILE OPTIMIZATION ===== */
 
-	function optimizePerformance() {
+	function optimizeForMobile() {
+		if (isMobile) {
+			console.log("📱 Applying mobile optimizations");
+
+			// OPTIMIZE ANIMATIONS FOR MOBILE
+			businessCard.style.animationDuration = "3s";
+
+			// PREVENT SCROLLING ON CARD
+			businessCard.addEventListener(
+				"touchmove",
+				(event) => {
+					event.preventDefault();
+				},
+				{ passive: false }
+			);
+
+			// PREVENT CONTEXT MENU ON MOBILE
+			businessCard.addEventListener("contextmenu", (event) => {
+				event.preventDefault();
+			});
+
+			// iOS SPECIFIC FIXES
+			if (isIOS) {
+				console.log("🍎 Applying iOS fixes");
+				businessCard.style.webkitTransform = "translateZ(0)";
+				businessCard.style.webkitBackfaceVisibility = "hidden";
+			}
+		}
+
+		// PERFORMANCE OPTIMIZATION
 		businessCard.style.willChange = "transform";
 
-		businessCard.addEventListener("transitionend", () => {
-			setTimeout(() => {
-				businessCard.style.willChange = "auto";
-			}, 100);
-		});
-
-		// OPTIMIZE ANIMATIONS FOR MOBILE
-		if (window.innerWidth <= 500) {
-			console.log("📱 Mobile detected - optimizing animations");
-			document.documentElement.style.setProperty(
-				"--animation-duration",
-				"0.6s"
-			);
-		}
+		setTimeout(() => {
+			businessCard.style.willChange = "auto";
+		}, 2000);
 	}
 
-	/* ===== FOCUS OUTLINE REMOVAL ===== */
-
-	// REMOVE ALL FOCUS OUTLINES TO PREVENT DOUBLE BORDERS
-	function removeFocusOutlines() {
-		const style = document.createElement("style");
-		style.textContent = `
-            *, *:focus, *:active {
-                outline: none !important;
-            }
-            .business-card:focus {
-                outline: none !important;
-            }
-        `;
-		document.head.appendChild(style);
-
-		// REMOVE FOCUS FROM ANY FOCUSED ELEMENT
-		document.addEventListener("focusin", (event) => {
-			if (event.target !== businessCard) {
-				event.target.blur();
-			}
-		});
-	}
-
-	/* ===== INITIALIZATION FUNCTION ===== */
+	/* ===== INITIALIZATION ===== */
 
 	function init() {
-		console.log("🚀 Initializing all components...");
+		console.log("🚀 Initializing mobile-perfect card...");
 
-		// REMOVE FOCUS OUTLINES FIRST
-		removeFocusOutlines();
+		// SET UP EVENT LISTENERS BASED ON DEVICE
+		if (isMobile || isTouch) {
+			console.log("👆 Setting up touch events");
+			businessCard.addEventListener("touchstart", handleTouchStart, {
+				passive: false,
+			});
+			businessCard.addEventListener("touchend", handleTouchEnd, {
+				passive: false,
+			});
+		} else {
+			console.log("🖱️ Setting up mouse events");
+			businessCard.addEventListener("click", handleClick);
+		}
 
-		// MAIN EVENT LISTENERS
-		businessCard.addEventListener("click", handleCardClick);
+		// KEYBOARD SUPPORT (ALWAYS)
 		businessCard.addEventListener("keydown", handleKeydown);
 
-		// PREVENT DEFAULT FOCUS BEHAVIOR
-		businessCard.addEventListener("mousedown", (event) => {
-			event.preventDefault();
-		});
-
-		// ACCESSIBILITY SETUP
+		// ACCESSIBILITY
 		businessCard.setAttribute("tabindex", "0");
 		businessCard.setAttribute("role", "button");
 		updateAccessibility();
@@ -373,37 +435,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		setupSocialLinks();
 		setupTechStack();
 		setupImageHandling();
-		optimizePerformance();
+		optimizeForMobile();
 
-		// PREVENT CONTEXT MENU DURING FLIP
-		businessCard.addEventListener("contextmenu", (event) => {
-			if (isFlipping) {
-				event.preventDefault();
-			}
-		});
-
-		/* ===== MOBILE TOUCH SUPPORT ===== */
-
-		let touchStartTime;
-		businessCard.addEventListener("touchstart", (event) => {
-			touchStartTime = Date.now();
-		});
-
-		businessCard.addEventListener("touchend", (event) => {
-			const touchDuration = Date.now() - touchStartTime;
-			if (touchDuration < 500) {
-				// QUICK TAP
-				handleCardClick(event);
-			}
-		});
-
-		console.log("🎉 Perfect business card initialized!");
-		console.log("💡 Click anywhere on the card to flip");
-		console.log("⌨️ Use Enter/Space for keyboard navigation");
-		console.log("🔗 Hover over social icons to see usernames");
+		console.log("🎉 Mobile-perfect business card initialized!");
+		console.log(
+			isMobile ? "👆 Tap anywhere to flip" : "🖱️ Click anywhere to flip"
+		);
 	}
 
-	/* ===== RESPONSIVE ADJUSTMENTS ===== */
+	/* ===== RESPONSIVE HANDLING ===== */
 
 	let resizeTimer;
 	window.addEventListener("resize", () => {
@@ -412,9 +452,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const width = window.innerWidth;
 			console.log(`📱 Viewport: ${width}x${window.innerHeight}px`);
 
-			// ADJUST ANIMATIONS BASED ON SCREEN SIZE
-			if (width <= 400) {
-				console.log("📱 Small screen optimizations applied");
+			// RE-OPTIMIZE FOR SIZE CHANGES
+			if (width <= 768) {
 				businessCard.style.animationDuration = "3s";
 			} else {
 				businessCard.style.animationDuration = "4s";
@@ -422,74 +461,78 @@ document.addEventListener("DOMContentLoaded", () => {
 		}, 250);
 	});
 
-	/* ===== DEBUG INFORMATION ===== */
+	/* ===== DEBUG INFO ===== */
 
-	console.log("🔍 Card Info:");
-	console.log(
-		`- Dimensions: ${businessCard.offsetWidth}x${businessCard.offsetHeight}px`
-	);
-	console.log(`- Viewport: ${window.innerWidth}x${window.innerHeight}px`);
-	console.log(
-		`- Device: ${
-			navigator.userAgent.includes("Mobile") ? "Mobile" : "Desktop"
-		}`
-	);
-	console.log(`- Touch support: ${"ontouchstart" in window ? "Yes" : "No"}`);
+	console.log("🔍 Device Info:");
+	console.log(`- Screen: ${window.innerWidth}x${window.innerHeight}px`);
+	console.log(`- Device Pixel Ratio: ${window.devicePixelRatio}`);
+	console.log(`- User Agent: ${navigator.userAgent.substring(0, 50)}...`);
 
 	// INITIALIZE EVERYTHING
 	init();
 
 	/* ===== DEBUG FUNCTIONS ===== */
-	// EDIT THESE FOR TESTING
 
 	window.debugCard = {
-		flip: flipCard, // Call window.debugCard.flip() to flip manually
-		isFlipped: () => isFlipped, // Check if card is flipped
-		isFlipping: () => isFlipping, // Check if card is currently flipping
+		flip: flipCard,
+		isFlipped: () => isFlipped,
+		isFlipping: () => isFlipping,
+		isMobile: () => isMobile,
 		reset: () => {
-			// Reset card to front
 			businessCard.classList.remove("flipped");
 			isFlipped = false;
 			isFlipping = false;
-			console.log("🔄 Card reset to front");
+			console.log("🔄 Card reset");
 		},
 	};
 
-	console.log("🐛 Debug: Use window.debugCard for manual control");
+	console.log("🐛 Debug: window.debugCard available");
 });
 
-/* ===== GLOBAL ERROR HANDLING ===== */
+/* ===== GLOBAL MOBILE FIXES ===== */
 
-window.addEventListener("error", (event) => {
-	console.error("❌ Error:", event.error?.message || event.message);
-});
-
-/* ===== PREVENT ZOOM ON DOUBLE TAP (iOS) ===== */
-
+// PREVENT DOUBLE TAP ZOOM ON iOS
 let lastTouchEnd = 0;
 document.addEventListener(
 	"touchend",
 	(event) => {
-		const now = new Date().getTime();
+		const now = Date.now();
 		if (now - lastTouchEnd <= 300) {
 			event.preventDefault();
 		}
 		lastTouchEnd = now;
 	},
-	false
+	{ passive: false }
 );
 
-/* ===== ADDITIONAL FOCUS PREVENTION ===== */
-
-document.addEventListener("DOMContentLoaded", () => {
-	// REMOVE FOCUS FROM ANY ELEMENT THAT GETS FOCUSED
-	document.addEventListener(
-		"focus",
-		(event) => {
-			if (event.target.tagName !== "BODY") {
-				setTimeout(() => event.target.blur(), 0);
-			}
-		},
-		true
-	);
+// PREVENT PULL TO REFRESH
+let startY = 0;
+document.addEventListener("touchstart", (event) => {
+	startY = event.touches[0].pageY;
 });
+
+document.addEventListener(
+	"touchmove",
+	(event) => {
+		const y = event.touches[0].pageY;
+		if (y > startY && window.scrollY === 0) {
+			event.preventDefault();
+		}
+	},
+	{ passive: false }
+);
+
+// GLOBAL ERROR HANDLING
+window.addEventListener("error", (event) => {
+	console.error("❌ Error:", event.error?.message || event.message);
+});
+
+// ORIENTATION CHANGE HANDLING
+window.addEventListener("orientationchange", () => {
+	setTimeout(() => {
+		console.log("📱 Orientation changed, refreshing layout");
+		window.scrollTo(0, 0);
+	}, 100);
+});
+
+console.log("🎴 Mobile Business Card Script Loaded Successfully!");

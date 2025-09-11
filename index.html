@@ -2,18 +2,27 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Portfolio Card - Gaurav Singh</title>
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+		/>
+		<title>Business Card - Gaurav Singh</title>
 		<link rel="stylesheet" href="style.css" />
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 		/>
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta
+			name="apple-mobile-web-app-status-bar-style"
+			content="black-translucent"
+		/>
+		<meta name="theme-color" content="#000000" />
 	</head>
 	<body>
 		<div class="container">
-			<!-- MAIN BUSINESS CARD CONTAINER -->
-			<div class="business-card" id="businessCard" tabindex="0">
+			<!-- MAIN BUSINESS CARD - MOBILE OPTIMIZED -->
+			<div class="business-card" id="businessCard">
 				<!-- FRONT SIDE OF CARD -->
 				<div class="card-face card-front">
 					<!-- LEFT SECTION - PROFILE IMAGE -->
@@ -34,52 +43,48 @@
 					<!-- RIGHT SECTION - INFO AND SOCIAL LINKS -->
 					<div class="card-right">
 						<div class="info-section">
-							<!-- NAME AND TITLE -->
 							<h1 class="name">Gaurav Singh</h1>
 							<p class="title">B-Tech Computer Science Student</p>
 							<p class="location">📍 Bangalore, India</p>
 
-							<!-- SOCIAL MEDIA LINKS WITH TOOLTIPS -->
+							<!-- SOCIAL MEDIA LINKS - MOBILE OPTIMIZED -->
 							<div class="social-links">
 								<a
 									href="https://www.github.com/grvsnh/"
 									class="social-link github"
 									target="_blank"
-									aria-label="GitHub"
-									onclick="event.stopPropagation();"
-									data-tooltip="@grvsnh"
+									rel="noopener"
 								>
 									<i class="fab fa-github"></i>
+									<span class="social-tooltip">@grvsnh</span>
 								</a>
 								<a
 									href="https://www.linkedin.com/in/grvsnh/"
 									class="social-link linkedin"
 									target="_blank"
-									aria-label="LinkedIn"
-									onclick="event.stopPropagation();"
-									data-tooltip="@grvsnh"
+									rel="noopener"
 								>
 									<i class="fab fa-linkedin-in"></i>
+									<span class="social-tooltip">@grvsnh</span>
 								</a>
 								<a
 									href="mailto:gaurav.workspace007@gmail.com"
 									class="social-link email"
-									aria-label="Email"
-									onclick="event.stopPropagation();"
-									data-tooltip="gaurav.workspace007@gmail.com"
 								>
 									<i class="fas fa-envelope"></i>
+									<span class="social-tooltip"
+										>gaurav.workspace007@gmail.com</span
+									>
 								</a>
 							</div>
 
-							<!-- TAGLINE -->
 							<div class="tagline">
 								<p>"Yeh Dil mange more" 🇮🇳</p>
 							</div>
 						</div>
 					</div>
 
-					<!-- FLIP HINT ICON -->
+					<!-- FLIP HINT - MOBILE FRIENDLY -->
 					<div class="flip-hint">
 						<i class="fas fa-sync-alt"></i>
 					</div>
@@ -88,13 +93,11 @@
 				<!-- BACK SIDE OF CARD -->
 				<div class="card-face card-back">
 					<div class="back-content">
-						<!-- ABOUT SECTION HEADER -->
 						<div class="about-header">
 							<h2>About</h2>
 							<div class="divider"></div>
 						</div>
 
-						<!-- ABOUT TEXT -->
 						<div class="about-text">
 							<p>
 								B-Tech CS student passionate about Python &
@@ -104,92 +107,59 @@
 							</p>
 						</div>
 
-						<!-- TECH STACK SECTION -->
+						<!-- TECH STACK - MOBILE OPTIMIZED -->
 						<div class="tech-section">
 							<h3>Tech Stack</h3>
 							<div class="tech-grid">
-								<!-- TECH ITEMS - NO TOOLTIPS ON HOVER -->
-								<div
-									class="tech-item python"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item python">
 									<i class="fab fa-python"></i>
 								</div>
-								<div
-									class="tech-item javascript"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item javascript">
 									<i class="fab fa-js-square"></i>
 								</div>
-								<div
-									class="tech-item react"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item react">
 									<i class="fab fa-react"></i>
 								</div>
-								<div
-									class="tech-item node"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item node">
 									<i class="fab fa-node-js"></i>
 								</div>
-								<div
-									class="tech-item linux"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item linux">
 									<i class="fab fa-linux"></i>
 								</div>
-								<div
-									class="tech-item git"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item git">
 									<i class="fab fa-git-alt"></i>
 								</div>
-								<div
-									class="tech-item html"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item html">
 									<i class="fab fa-html5"></i>
 								</div>
-								<div
-									class="tech-item css"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item css">
 									<i class="fab fa-css3-alt"></i>
 								</div>
-								<div
-									class="tech-item docker"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item docker">
 									<i class="fab fa-docker"></i>
 								</div>
-								<div
-									class="tech-item mongodb"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item mongodb">
 									<i class="fas fa-database"></i>
 								</div>
-								<div
-									class="tech-item aws"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item aws">
 									<i class="fab fa-aws"></i>
 								</div>
-								<div
-									class="tech-item vscode"
-									onclick="event.stopPropagation();"
-								>
+								<div class="tech-item vscode">
 									<i class="fas fa-code"></i>
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<!-- BACK FLIP HINT -->
 					<div class="flip-hint back">
 						<i class="fas fa-undo-alt"></i>
 					</div>
 				</div>
+			</div>
+
+			<!-- MOBILE TAP INDICATOR -->
+			<div class="mobile-hint">
+				<p>Tap anywhere to flip</p>
 			</div>
 		</div>
 
